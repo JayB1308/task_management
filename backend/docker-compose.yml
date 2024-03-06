@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:13.4-alpine
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${DB_ENV}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+  app:
+    container_name: app
+    build: .
+    command: flask run --host 0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - 5000:5000
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - FLASK_DEBUG=1
+    depends_on:
+      - postgres
