@@ -1,9 +1,14 @@
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
   const {
     register,
@@ -14,6 +19,12 @@ export function Login() {
   const onSubmit = (data) => {
     dispatch(loginUser({ username: data.username, password: data.password }));
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <form className="mt-6 px-6" onSubmit={handleSubmit(onSubmit)}>

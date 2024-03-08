@@ -24,15 +24,21 @@ blp = Blueprint("auth", __name__, url_prefix="/auth", description="Authorization
 @blp.route("/login")
 class Login(MethodView):
     @blp.arguments(LoginRequestSchema)
-    @blp.response(200, LoginResponseSchema)
+    @blp.response(200, UserResponseSchema)
     def post(self, item_data):
-
         user = User.query.filter(User.username == item_data["username"]).first()
         if user and pbkdf2_sha256.verify(item_data["password"], user.password):
             access_token = create_access_token(identity=user.id)
             refresh_token = create_refresh_token(user.id)
+            user_schema = UserResponseSchema()
             return (
-                jsonify({"access_token": access_token, "refresh_token": refresh_token}),
+                jsonify(
+                    {
+                        "access_token": access_token,
+                        "refresh_token": refresh_token,
+                        "user": user_schema.dump(user),
+                    }
+                ),
                 200,
             )
         else:
@@ -97,13 +103,3 @@ class GetUsers(MethodView):
         user_schema = UserResponseSchema(many=True)
         results = user_schema.dump(users)
         return jsonify({"data": results})
-
-
-@blp.route("/current_user")
-class GetCurrentUser(MethodView):
-    @jwt_required()
-    @blp.response(200, UserResponseSchema())
-    def get(self):
-        user = User.query.get_or_404(get_jwt_identity())
-        user_schema = UserResponseSchema()
-        return jsonify({"user": user_schema.dump(user)}), 200
