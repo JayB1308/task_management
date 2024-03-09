@@ -20,3 +20,9 @@ class UpdateProjectRequestSchema(Schema):
     name = fields.String()
     status = fields.Raw()
     project_meta = fields.Raw()
+
+
+class ProjectStatsSchema(Schema):
+    active = fields.Number()
+    pending = fields.Number()
+    closed = fields.Number()

@@ -1,9 +1,13 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getTeam } from "./store";
 import { Sidebar } from "./components/Sidebar";
 import Router from "./routes";
 
 function App() {
+  const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const user = useSelector((state) => state.user.user);
 
   return (
     <>

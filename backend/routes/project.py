@@ -3,10 +3,12 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required
 from models.project import Project as ProjectModel
+from enums.status import Status
 from schemas.project import (
     CreateProjectRequestSchema,
     ProjectResponseSchema,
     UpdateProjectRequestSchema,
+    ProjectStatsSchema,
 )
 from app import db
 import uuid
@@ -45,6 +47,31 @@ class Project(MethodView):
         projects = project_query.all()
         schema = ProjectResponseSchema(many=True)
         return jsonify({"data": (schema.dump(projects))})
+
+
+@blp.route("/stats")
+class ProjectStats(MethodView):
+    @jwt_required()
+    @blp.response(200, ProjectStatsSchema)
+    def get(self):
+        team = request.args.get("team_id")
+        project_query = ProjectModel.query
+        if team:
+            project_query = project_query.filter(ProjectModel.team_id == team)
+            active_query = project_query.filter(ProjectModel.status == Status.ACTIVE)
+            pending_query = project_query.filter(ProjectModel.status == Status.PENDING)
+            closed_query = project_query.filter(ProjectModel.status == Status.CLOSED)
+
+        return (
+            jsonify(
+                {
+                    "active": active_query.count(),
+                    "pending": pending_query.count(),
+                    "closed": closed_query.count(),
+                }
+            ),
+            200,
+        )
 
 
 @blp.route("/<uuid:project_id>")
