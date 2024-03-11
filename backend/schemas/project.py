@@ -14,6 +14,7 @@ class ProjectResponseSchema(Schema):
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
     team_id = fields.UUID()
+    count = fields.Number()
 
 
 class UpdateProjectRequestSchema(Schema):

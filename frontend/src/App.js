@@ -9,6 +9,12 @@ function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const user = useSelector((state) => state.user.user);
 
+  useEffect(() => {
+    if (isLoggedIn && user) {
+      dispatch(getTeam(user.team_id));
+    }
+  }, [user, isLoggedIn]);
+
   return (
     <>
       {isLoggedIn && <Sidebar />}

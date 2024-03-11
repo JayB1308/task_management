@@ -1,13 +1,15 @@
-export function StatsCard({ label, value, color }) {
+export function StatsCard({ label, value, bgColor, textColor }) {
   return (
-    <div className="px-4 ml-1 py-5 w-48 h-32 flex flex-col  shadow-lg rounded-lg">
-      <span
-        className={`bg-${color} text-white text-sm rounded-full px-5 py-1 w-1/2`}
-      >
-        {label}
-      </span>
-      <h1 className={`text-${color} font-semibold ml-2 text-5xl`}>{value}</h1>
-      <p className="ml-3 mt-1 font-light">Projects</p>
+    <div className="px-4 ml-1 py-5 w-32 h-24 flex items-end gap-2 shadow-lg rounded-lg">
+      <h1 className={`${textColor} font-semibold text-6xl`}>{value}</h1>
+      <div className="flex flex-col items-start">
+        <span
+          className={`${bgColor} rounded-full text-xs px-2 py-0.5 text-white`}
+        >
+          {label}
+        </span>
+        <span className="text-sm">Projects</span>
+      </div>
     </div>
   );
 }
