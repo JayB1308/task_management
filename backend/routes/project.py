@@ -81,7 +81,7 @@ class ProjectByID(MethodView):
     def get(self, project_id):
         project = ProjectModel.query.get_or_404(project_id)
         project_schema = ProjectResponseSchema()
-        return jsonify({"data": project_schema.dump(project)})
+        return jsonify({"project": project_schema.dump(project)})
 
     @jwt_required()
     @blp.response(200)
@@ -102,8 +102,9 @@ class ProjectByID(MethodView):
             if "status" in project_data and project_data["status"]:
                 project.status = project_data["status"]
             if "project_meta" in project_data and project_data["project_meta"]:
-                project.project_meta = project_data["project_meta"]
+                for key, value in project_data["project_meta"].items():
+                    project.project_meta[key] = value
 
         db.session.commit()
         project_schema = ProjectResponseSchema()
-        return jsonify({"data": (project_schema.dump(project))})
+        return jsonify({"project": (project_schema.dump(project))})

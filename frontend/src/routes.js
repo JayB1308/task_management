@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Auth } from "./pages/Auth";
 import { Dashboard } from "./pages/Dashboard";
 import { Project } from "./pages/Project";
-import { DashboardLayout } from "./layout/DashboardLayout";
+import { CurrentProject } from "./pages/CurrentProject";
 
 const ProtectedRoute = ({ children }) => {
   const isLoggedIn = useSelector((state) => {
@@ -30,6 +30,14 @@ const Router = () => {
         element={
           <ProtectedRoute>
             <Project />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/project/:projectID"
+        element={
+          <ProtectedRoute>
+            <CurrentProject />
           </ProtectedRoute>
         }
       />

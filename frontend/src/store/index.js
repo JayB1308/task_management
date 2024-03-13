@@ -20,3 +20,6 @@ export * from "./thunks/getTeam";
 export * from "./thunks/getProjects";
 export * from "./thunks/createProject";
 export * from "./thunks/getProjectStats";
+export * from "./thunks/getCurrentProject";
+export * from "./thunks/updateProject";
+export * from "./thunks/removeProject";
