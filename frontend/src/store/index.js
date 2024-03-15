@@ -4,6 +4,7 @@ import { tabReducer } from "./slices/tabSlices";
 import { projectReducer } from "./slices/projectSlices";
 import { teamReducer } from "./slices/teamSlice";
 import { modalReducers } from "./slices/modalSlice";
+import { taskReducer } from "./slices/taskSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     project: projectReducer,
     team: teamReducer,
     modal: modalReducers,
+    task: taskReducer,
   },
 });
 
@@ -23,3 +25,5 @@ export * from "./thunks/getProjectStats";
 export * from "./thunks/getCurrentProject";
 export * from "./thunks/updateProject";
 export * from "./thunks/removeProject";
+export * from "./thunks/createTask";
+export * from "./thunks/getTasks";

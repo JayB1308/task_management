@@ -95,6 +95,15 @@ class CheckEmail(MethodView):
             return {"message": "Username unavailable"}, 403
 
 
+@blp.route("/user/<uuid:user_id>")
+class GetUserName(MethodView):
+    @blp.response(200, UserResponseSchema)
+    def get(self, user_id):
+        user = User.query.get(user_id)
+        user_schema = UserResponseSchema()
+        return jsonify({"username": user_schema.dump(user)}), 200
+
+
 @blp.route("/get_users")
 class GetUsers(MethodView):
     @blp.response(200, UserResponseSchema(many=True))

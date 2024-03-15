@@ -8,7 +8,7 @@ function Modal({ children }) {
   return (
     <div
       className="relative z-10 overflow-hidden"
-      onClick={() => dispatch(close())}
+      onClick={() => dispatch(close({ id: null }))}
     >
       <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">

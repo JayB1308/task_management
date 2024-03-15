@@ -6,6 +6,8 @@ class CreateTaskRequestSchema(Schema):
     description = fields.String()
     project_id = fields.UUID(required=True)
     type = fields.Raw()
+    priority = fields.Raw()
+    parent_task_id = fields.UUID()
 
 
 class GetTaskResponseSchema(Schema):
@@ -22,6 +24,7 @@ class GetTaskResponseSchema(Schema):
     project_id = fields.UUID()
     assignee_id = fields.UUID()
     task_id = fields.UUID()
+    has_subtask = fields.Boolean()
 
 
 class UpdateTaskRequestSchema(Schema):

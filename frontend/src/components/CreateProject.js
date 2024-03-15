@@ -15,7 +15,7 @@ export function CreateProject() {
 
   const onSubmit = (data) => {
     dispatch(createProject({ name: data.name, team_id: team_id }));
-    dispatch(close());
+    dispatch(close({ id: "project" }));
   };
 
   return (
@@ -46,7 +46,7 @@ export function CreateProject() {
             Save
           </button>
           <button
-            onClick={() => dispatch(close())}
+            onClick={() => dispatch(close({ id: "project" }))}
             className="text-red-500 py-1 px-8 bg-white border-2 border-red-500 font-semibold text-lg"
           >
             Cancel

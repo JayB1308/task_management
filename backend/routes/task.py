@@ -11,6 +11,7 @@ from schemas.task import (
 from enums.type import Type
 from app import db
 import uuid
+import logging
 
 blp = Blueprint("task", __name__, url_prefix="/task", description="Task")
 
@@ -38,24 +39,32 @@ class Task(MethodView):
             task_query = task_query.filter(TaskModel.priority == priority)
         tasks = task_query.all()
         task_schema = GetTaskResponseSchema(many=True)
-        return jsonify({"data": (task_schema.dump(tasks))}), 200
+        return jsonify({"tasks": (task_schema.dump(tasks))}), 200
 
     @jwt_required()
     @blp.arguments(CreateTaskRequestSchema)
-    @blp.response(201)
+    @blp.response(201, GetTaskResponseSchema())
     def post(self, task_data):
         task = TaskModel(
             id=uuid.uuid4().hex,
             title=task_data["title"],
             description=task_data["description"],
             project_id=task_data["project_id"],
+            type=task_data["type"],
+            priority=task_data["priority"],
         )
-        if "type" in task_data:
-            if task_data["type"] == Type.SUBTASK:
-                task.type = Type.SUBTASK
+
+        if task_data["type"].lower() == Type.SUBTASK.value:
+            parent_task_id = task_data["parent_task_id"]
+            parent_task: TaskModel = TaskModel.query.get(parent_task_id)
+            task.task_id = parent_task.id
+            parent_task.has_subtask = True
+            db.session.add(parent_task)
+
         db.session.add(task)
         db.session.commit()
-        return {"message": "Task created succesfully!"}
+        task_schema = GetTaskResponseSchema()
+        return jsonify({"task": task_schema.dump(task)}), 201
 
 
 @blp.route("/<uuid:task_id>")
@@ -71,7 +80,6 @@ class TaskByID(MethodView):
     @blp.arguments(UpdateTaskRequestSchema)
     @blp.response(203, GetTaskResponseSchema)
     def put(self, task_data, task_id):
-
         task = TaskModel.query.filter(TaskModel.id == task_id).first()
 
         if task:
@@ -88,7 +96,7 @@ class TaskByID(MethodView):
             if "status" in task_data and task_data["status"]:
                 task.status = task_data["status"]
             if "priority" in task_data and task_data["priority"]:
-                task.status = task_data["priority"]
+                task.priority = task_data["priority"]
             if "assignee_id" in task_data and task_data["assignee_id"]:
                 task.assignee_id = task_data["assignee_id"]
 

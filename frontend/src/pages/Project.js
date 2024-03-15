@@ -12,6 +12,9 @@ import { IoIosTimer } from "react-icons/io";
 import { CiCalendar } from "react-icons/ci";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";
+import { calcDuration } from "../utils/calcDate";
+import "dayjs";
+import dayjs from "dayjs";
 
 function ProjectCard(props) {
   let bgClass = "bg-yellow-500";
@@ -32,17 +35,23 @@ function ProjectCard(props) {
       </div>
       <div className="flex w-1/4 h-full items-center justify-evenly gap-4">
         {props.project_meta?.start_date ? (
-          props.project_meta?.start_date
+          <span className="text-xs font-semibold">
+            {dayjs(props?.project_meta?.start_date).format("DD/MM")}
+          </span>
         ) : (
           <CiCalendar size={26} className="text-gray-500" />
         )}
-        {props.project_meta?.duration ? (
-          props.project_meta.duration
+        {props.project_meta ? (
+          <span className="text-xs font-bold">
+            {calcDuration(props)} {calcDuration(props) === 1 ? "day" : "days"}
+          </span>
         ) : (
           <IoIosTimer size={26} className="text-gray-400" />
         )}
         {props.project_meta?.end_date ? (
-          props.project_meta?.end_date
+          <span className="text-xs font-semibold">
+            {dayjs(props?.project_meta?.end_date).format("DD/MM")}
+          </span>
         ) : (
           <FaRegCalendarCheck size={20} className="text-gray-500" />
         )}
@@ -59,6 +68,7 @@ function ProjectCard(props) {
 export function Project() {
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.modal.isOpen);
+  const modalID = useSelector((state) => state.modal.id);
   const team_id = useSelector((state) => state.user.user.team_id);
   const projects = useSelector((state) => state.project.projects);
   const stats = useSelector((state) => state.project.stats);
@@ -70,7 +80,7 @@ export function Project() {
 
   return (
     <DashboardLayout>
-      {isOpen && (
+      {isOpen && modalID === "project" && (
         <ModalPage>
           <CreateProject />
         </ModalPage>
@@ -105,7 +115,7 @@ export function Project() {
           </div>
           <button
             className="w-1/5 h-12 bg-blue-800 text-white rounded-full flex items-center justify-between px-4"
-            onClick={() => dispatch(open())}
+            onClick={() => dispatch(open({ id: "project" }))}
           >
             <IoIosAddCircleOutline size={28} />
             <span className="font-semibold text-lg">Create Project</span>
