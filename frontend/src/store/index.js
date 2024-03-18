@@ -27,3 +27,6 @@ export * from "./thunks/updateProject";
 export * from "./thunks/removeProject";
 export * from "./thunks/createTask";
 export * from "./thunks/getTasks";
+export * from "./thunks/getCurrentTask";
+export * from "./thunks/deleteTask";
+export * from "./thunks/updateTask";

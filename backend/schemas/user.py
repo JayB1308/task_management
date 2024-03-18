@@ -10,3 +10,7 @@ class UserResponseSchema(Schema):
     updated_at = fields.DateTime()
     team_id = fields.UUID()
     access_token = fields.String()
+
+
+class CheckUsernameSchema(Schema):
+    username = fields.Raw()

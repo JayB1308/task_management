@@ -12,8 +12,8 @@ from flask_jwt_extended import (
 from passlib.hash import pbkdf2_sha256
 from models.user import User
 from schemas.register import RegisterRequestSchema, RegisterResponseSchema
-from schemas.login import LoginRequestSchema, LoginResponseSchema
-from schemas.user import UserResponseSchema
+from schemas.login import LoginRequestSchema
+from schemas.user import UserResponseSchema, CheckUsernameSchema
 from hashlib import md5
 from app import db
 import uuid
@@ -84,15 +84,16 @@ class Register(MethodView):
 
 
 @blp.route("/check_username")
-class CheckEmail(MethodView):
-    @blp.response(200)
-    @blp.alt_response(403)
+class CheckUsername(MethodView):
+    @blp.arguments(CheckUsernameSchema)
+    @blp.response(200, UserResponseSchema)
     def post(self, item_data):
-        user = User.query.filter(User.username == item_data["username"])
-        if not user:
-            return {"message": "Username available"}, 200
-        else:
-            return {"message": "Username unavailable"}, 403
+        if "username" in item_data and item_data["username"]:
+            user = User.query.filter(User.username == item_data["username"]).first()
+            print(user)
+            if user:
+                user_schema = UserResponseSchema()
+                return jsonify({"user": user_schema.dump(user)}), 200
 
 
 @blp.route("/user/<uuid:user_id>")

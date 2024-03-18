@@ -13,11 +13,17 @@ const userSlice = createSlice({
   },
   reducers: {
     setAccessToken: (state, action) => {
-      state.access_token = action.payload;
+      return {
+        ...state,
+        access_token: action.payload,
+      };
     },
     logout: (state, action) => {
-      state.user = null;
-      state.isLoggedIn = false;
+      return {
+        ...state,
+        user: null,
+        isLoading: false,
+      };
     },
   },
   extraReducers(builder) {
@@ -26,17 +32,23 @@ const userSlice = createSlice({
     });
 
     builder.addCase(loginUser.fulfilled, (state, action) => {
-      state.user = action.payload.user;
-      state.access_token = action.payload.access_token;
-      state.refresh_token = action.payload.refresh_token;
-      state.isLoggedIn = true;
-      state.isLoading = false;
+      return {
+        ...state,
+        user: action.payload.user,
+        access_token: action.payload.access_token,
+        refresh_token: action.payload.refresh_token,
+        isLoading: false,
+        isLoggedIn: true,
+      };
     });
 
     builder.addCase(loginUser.rejected, (state, action) => {
-      state.error = action.error;
-      state.isLoading = false;
-      state.isLoggedIn = false;
+      return {
+        ...state,
+        error: action.error,
+        isLoading: false,
+        isLoggedIn: false,
+      };
     });
   },
 });

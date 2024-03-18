@@ -11,7 +11,7 @@ from schemas.task import (
 from enums.type import Type
 from app import db
 import uuid
-import logging
+
 
 blp = Blueprint("task", __name__, url_prefix="/task", description="Task")
 
@@ -26,6 +26,7 @@ class Task(MethodView):
         task_type = request.args.get("type")
         status = request.args.get("status")
         priority = request.args.get("priority")
+        parent_task_id = request.args.get("task_id")
         task_query = TaskModel.query
         if assignee_id:
             task_query = task_query.filter(TaskModel.assignee_id == assignee_id)
@@ -37,6 +38,8 @@ class Task(MethodView):
             task_query = task_query.filter(TaskModel.status == status)
         if priority:
             task_query = task_query.filter(TaskModel.priority == priority)
+        if parent_task_id:
+            task_query = task_query.filter(TaskModel.task_id == parent_task_id)
         tasks = task_query.all()
         task_schema = GetTaskResponseSchema(many=True)
         return jsonify({"tasks": (task_schema.dump(tasks))}), 200
@@ -74,7 +77,7 @@ class TaskByID(MethodView):
     def get(self, task_id):
         task = TaskModel.query.get_or_404(task_id)
         task_schema = GetTaskResponseSchema()
-        return {"data": jsonify(task_schema.dumps(task))}, 200
+        return {"task": jsonify(task_schema.dumps(task))}, 200
 
     @jwt_required()
     @blp.arguments(UpdateTaskRequestSchema)
@@ -91,7 +94,7 @@ class TaskByID(MethodView):
                 task.start_date = task_data["start_date"]
             if "end_date" in task_data and task_data["end_date"]:
                 task.end_date = task_data["end_date"]
-            if "tyle" in task_data and task_data["type"]:
+            if "type" in task_data and task_data["type"]:
                 task.type = task_data["type"]
             if "status" in task_data and task_data["status"]:
                 task.status = task_data["status"]
@@ -102,7 +105,7 @@ class TaskByID(MethodView):
 
         db.session.commit()
         task_schema = GetTaskResponseSchema()
-        return jsonify({"data": (task_schema.dump(task))}), 203
+        return jsonify({"task": (task_schema.dump(task))}), 203
 
     @jwt_required()
     @blp.response(204)

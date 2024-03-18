@@ -4,6 +4,7 @@ import { Auth } from "./pages/Auth";
 import { Dashboard } from "./pages/Dashboard";
 import { Project } from "./pages/Project";
 import { CurrentProject } from "./pages/CurrentProject";
+import { CurrentTask } from "./components/CurrentTask";
 
 const ProtectedRoute = ({ children }) => {
   const isLoggedIn = useSelector((state) => {
@@ -38,6 +39,14 @@ const Router = () => {
         element={
           <ProtectedRoute>
             <CurrentProject />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/task/:taskID"
+        element={
+          <ProtectedRoute>
+            <CurrentTask />
           </ProtectedRoute>
         }
       />

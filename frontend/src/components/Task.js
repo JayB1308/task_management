@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import { CiCalendar } from "react-icons/ci";
 import { Link } from "react-router-dom";
@@ -9,11 +10,12 @@ import { privateApiInstance } from "../axios";
 import { FaUser } from "react-icons/fa";
 import { MdAddTask } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
-
+import { setCurrentTask } from "../store/slices/taskSlice";
 import dayjs from "dayjs";
 
 export function Task({ task }) {
   const [assignee, setAssignee] = useState();
+  const dispatch = useDispatch();
 
   const getAssignee = async () => {
     if (task.assignee_id) {
@@ -32,9 +34,9 @@ export function Task({ task }) {
   }, []);
 
   return (
-    <div className="w-full h-10 pr-2 shadow-md flex items-center rounded-sm">
+    <div className="w-full h-10 pr-2 shadow-md flex items-center rounded-sm mt-3">
       <div
-        className={`w-2 h-full ${getStatusBackground(task.status)} mr-1`}
+        className={`w-1 h-full ${getStatusBackground(task.status)} mr-1`}
       ></div>
       <div className="flex items-center w-[93%] gap-8  pr-2">
         <h3 className="text-lg w-[45%] font-semibold ">{task.title}</h3>
@@ -69,13 +71,7 @@ export function Task({ task }) {
             <CiCalendar size={26} className="text-gray-500" />
           )}
         </div>
-        {assignee ? (
-          <h2 className="text-sm ">{assignee.username}</h2>
-        ) : (
-          <div className="p-2 bg-gray-200 rounded-full ">
-            <FaUser />
-          </div>
-        )}
+
         <div
           className={`w-12 flex justify-center items-center  text-white font-semibold rounded-full ${getPrioirityBG(
             task.priority.split(".")[1]
@@ -87,7 +83,11 @@ export function Task({ task }) {
           {task.has_subtask ? <FaTasks size={22} /> : <MdAddTask size={24} />}
         </div>
       </div>
-      <Link to="/" className="text-slate-700 ml-auto 1/12">
+      <Link
+        to={`/task/${task.id}`}
+        className="text-slate-700 ml-auto 1/12"
+        onClick={() => dispatch(setCurrentTask(task))}
+      >
         <HiOutlineExternalLink size={22} />
       </Link>
     </div>

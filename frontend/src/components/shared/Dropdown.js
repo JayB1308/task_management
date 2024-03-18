@@ -10,16 +10,21 @@ export function Dropdown({
   dropdownClasses,
   handleChange,
   currentSelection,
+  disableCondition,
+  disabledOption,
 }) {
   return (
-    <>
+    <div className={`relative ${width}`}>
       <button
+        disabled={disableCondition}
         onClick={() => setIsOpen(!isOpen)}
-        className={`${buttonClasses} ${width} px-2 py-1 flex items-center justify-between gap-2  ${
+        className={`${buttonClasses} ${
+          disableCondition && "cursor-not-allowed"
+        } w-full px-2 py-1 flex items-center justify-between gap-2  ${
           isOpen ? "rounded-t-md" : "rounded-md"
         }`}
       >
-        {currentSelection}
+        {disableCondition ? disabledOption : currentSelection}
         {isOpen ? (
           <FaChevronUp
             onClick={() => {
@@ -40,7 +45,7 @@ export function Dropdown({
       </button>
       {isOpen && (
         <ul
-          className={`absolute flex flex-col ${dropdownClasses} ${width} px-2 items-start top-8`}
+          className={`absolute flex flex-col ${dropdownClasses} w-full px-2 items-start top-8`}
         >
           {options.map((option) => {
             return (
@@ -55,6 +60,6 @@ export function Dropdown({
           })}
         </ul>
       )}
-    </>
+    </div>
   );
 }

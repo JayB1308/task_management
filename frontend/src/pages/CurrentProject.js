@@ -13,6 +13,7 @@ export function CurrentProject() {
   const { projectID } = useParams();
   const isOpen = useSelector((state) => state.modal.isOpen);
   const modalID = useSelector((state) => state.modal.id);
+  const tasks = useSelector((state) => state.task.tasks);
 
   useEffect(() => {
     dispatch(getTasks(projectID));
@@ -27,7 +28,7 @@ export function CurrentProject() {
       )}
       <DashboardLayout>
         <CurrentProjectHeader />
-        <ProjectTasks />
+        <ProjectTasks tasks={tasks} />
       </DashboardLayout>
     </>
   );

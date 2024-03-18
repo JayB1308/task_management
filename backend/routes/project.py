@@ -102,8 +102,11 @@ class ProjectByID(MethodView):
             if "status" in project_data and project_data["status"]:
                 project.status = project_data["status"]
             if "project_meta" in project_data and project_data["project_meta"]:
-                for key, value in project_data["project_meta"].items():
-                    project.project_meta[key] = value
+                if project.project_meta == None:
+                    project.project_meta = project_data["project_meta"]
+                else:
+                    for key, value in project_data["project_meta"].items():
+                        project.project_meta[key] = value
 
         db.session.commit()
         project_schema = ProjectResponseSchema()

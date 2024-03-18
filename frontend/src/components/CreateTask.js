@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +20,7 @@ export function CreateTask() {
   const dispatch = useDispatch();
   const currentProject = useSelector((state) => state.project.currentProject);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     register,
@@ -119,6 +121,8 @@ export function CreateTask() {
                 }}
                 buttonClasses={`${getTypeBG(currentType)} text-white text-md`}
                 dropdownClasses={"bg-gray-100 shadow-md"}
+                disableCondition={location.pathname.split("/")[1] === "task"}
+                disabledOption={types[2].value}
               />
             </div>
             <div className="relative w-auto flex justify-end items-center">

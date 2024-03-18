@@ -29,7 +29,6 @@ export function Sidebar() {
         />
         <SidebarIcon icon={<FaHome size={32} />} path="/" />
         <SidebarIcon icon={<AiFillProject size={28} />} path="/project" />
-        <SidebarIcon icon={<FaUserGroup size={28} />} />
       </div>
       <div className="flex justify-center items-center mb-3">
         <SidebarIcon icon={<IoLogOutOutline size={28} />} />

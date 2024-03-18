@@ -17,17 +17,26 @@ const projectSlice = createSlice({
   },
   reducers: {
     setCurrentProject(state, action) {
-      state.currentProject = action.payload;
+      return {
+        ...state,
+        currentProject: action.payload,
+      };
     },
   },
   extraReducers(builder) {
     builder.addCase(getProjects.pending, (state, action) => {
-      state.isLoading = true;
+      return {
+        ...state,
+        isLoading: true,
+      };
     });
 
     builder.addCase(getProjects.fulfilled, (state, action) => {
-      state.projects = action.payload;
-      state.isLoading = false;
+      return {
+        ...state,
+        projects: action.payload,
+        isLoading: false,
+      };
     });
 
     builder.addCase(createProject.fulfilled, (state, action) => {
@@ -35,15 +44,24 @@ const projectSlice = createSlice({
     });
 
     builder.addCase(getProjectStats.fulfilled, (state, action) => {
-      state.stats = action.payload;
+      return {
+        ...state,
+        stats: action.payload,
+      };
     });
 
     builder.addCase(getCurrentProject.fulfilled, (state, action) => {
-      state.currentProject = action.payload;
+      return {
+        ...state,
+        currentProject: action.payload,
+      };
     });
 
     builder.addCase(updateProject.fulfilled, (state, action) => {
-      state.currentProject = action.payload;
+      return {
+        ...state,
+        currentProject: action.payload,
+      };
     });
 
     builder.addCase(removeProject.fulfilled, (state, action) => {

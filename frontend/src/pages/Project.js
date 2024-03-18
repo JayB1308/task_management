@@ -1,20 +1,17 @@
+import "dayjs";
+import dayjs from "dayjs";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { open } from "../store/slices/modalSlice";
-import { StatsCard } from "../components/StatsCard";
-import { DashboardLayout } from "../layout/DashboardLayout";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { ModalPage } from "../layout/Modal";
-import { CreateProject } from "../components/CreateProject";
-import { getProjects, getProjectStats } from "../store/index";
-import { Link } from "react-router-dom";
-import { IoIosTimer } from "react-icons/io";
 import { CiCalendar } from "react-icons/ci";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";
-import { calcDuration } from "../utils/calcDate";
-import "dayjs";
-import dayjs from "dayjs";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import { CreateProject } from "../components/CreateProject";
+import { DashboardLayout } from "../layout/DashboardLayout";
+import { ModalPage } from "../layout/Modal";
+import { getProjectStats, getProjects } from "../store/index";
+import { open } from "../store/slices/modalSlice";
 
 function ProjectCard(props) {
   let bgClass = "bg-yellow-500";
@@ -41,13 +38,7 @@ function ProjectCard(props) {
         ) : (
           <CiCalendar size={26} className="text-gray-500" />
         )}
-        {props.project_meta ? (
-          <span className="text-xs font-bold">
-            {calcDuration(props)} {calcDuration(props) === 1 ? "day" : "days"}
-          </span>
-        ) : (
-          <IoIosTimer size={26} className="text-gray-400" />
-        )}
+
         {props.project_meta?.end_date ? (
           <span className="text-xs font-semibold">
             {dayjs(props?.project_meta?.end_date).format("DD/MM")}
@@ -56,7 +47,7 @@ function ProjectCard(props) {
           <FaRegCalendarCheck size={20} className="text-gray-500" />
         )}
         <span
-          className={`${bgClass} text-white text-xs font-semibold h-4 w-14 rounded-full text-center`}
+          className={`${bgClass} text-white text-xs font-semibold h-4 w-16 rounded-full text-center`}
         >
           {props.status.split(".")[1]}
         </span>
@@ -67,16 +58,16 @@ function ProjectCard(props) {
 
 export function Project() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const isOpen = useSelector((state) => state.modal.isOpen);
   const modalID = useSelector((state) => state.modal.id);
   const team_id = useSelector((state) => state.user.user.team_id);
   const projects = useSelector((state) => state.project.projects);
-  const stats = useSelector((state) => state.project.stats);
 
   useEffect(() => {
     dispatch(getProjects({ team_id: team_id }));
     dispatch(getProjectStats({ team_id: team_id }));
-  }, []);
+  }, [location.key]);
 
   return (
     <DashboardLayout>
@@ -86,40 +77,24 @@ export function Project() {
         </ModalPage>
       )}
       <div className="flex flex-col items-center">
-        <h1 className="text-4xl font-semibold w-full text-blue-700">
-          All Projects
-        </h1>
-        <p className="text-lg font-medium w-full">
-          See all your projects here.
-        </p>
-        <div className="flex justify-between items-center w-full">
-          <div className="w-full flex items-center gap-10">
-            <StatsCard
-              label="Active"
-              value={stats.active}
-              bgColor="bg-yellow-500"
-              textColor="text-yellow-600"
-            />
-            <StatsCard
-              label="Pending"
-              value={stats.pending}
-              bgColor="bg-slate-500"
-              textColor="text-slate-600"
-            />
-            <StatsCard
-              label="Closed"
-              value={stats.closed}
-              bgColor="bg-green-900"
-              textColor="text-green-900"
-            />
+        <div className="w-full flex items-center justify-between">
+          <div className="w-1/2 flex flex-col items-start">
+            <h1 className="text-4xl font-semibold w-full text-blue-700">
+              All Projects
+            </h1>
+            <p className="text-lg font-medium w-full">
+              See all your projects here.
+            </p>
           </div>
-          <button
-            className="w-1/5 h-12 bg-blue-800 text-white rounded-full flex items-center justify-between px-4"
-            onClick={() => dispatch(open({ id: "project" }))}
-          >
-            <IoIosAddCircleOutline size={28} />
-            <span className="font-semibold text-lg">Create Project</span>
-          </button>
+          <div className="w-full flex justify-end items-center px-4">
+            <button
+              className="w-1/3 h-12 bg-blue-800 text-white rounded-full flex items-center justify-between px-4"
+              onClick={() => dispatch(open({ id: "project" }))}
+            >
+              <IoIosAddCircleOutline size={28} />
+              <span className="font-semibold text-lg">Create Project</span>
+            </button>
+          </div>
         </div>
         <div className="flex flex-col w-full h-auto items-start justify-center gap-4 mt-4 px-4 py-6">
           {projects.map((project) => {
