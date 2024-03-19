@@ -27,12 +27,28 @@ class CreateTeam(MethodView):
         return (
             jsonify(
                 {
-                    "data": team_schema.dump(team),
+                    "team": team_schema.dump(team),
                     "message": "Team created successfully!",
                 }
             ),
             201,
         )
+
+
+@blp.route("/join")
+class JoinTeam(MethodView):
+    @blp.arguments(CreateTeamRequestSchema)
+    @blp.response(200, TeamResponseSchema)
+    @blp.alt_response(403)
+    def put(self, team_data):
+        user = User.query.filter_by(id=get_jwt_identity()).first()
+        team = Team.query.filter_by(name=team_data["name"]).first()
+        if team:
+            user.team_id = team.id
+            team_schema = TeamResponseSchema()
+            return jsonify({"team": team_schema.dump(team)}), 200
+        db.session.commit()
+        return jsonify({"message": "Team not found!"}), 403
 
 
 @blp.route("/<uuid:team_id>")

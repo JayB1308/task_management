@@ -100,7 +100,7 @@ class TaskByID(MethodView):
                 task.status = task_data["status"]
             if "priority" in task_data and task_data["priority"]:
                 task.priority = task_data["priority"]
-            if "assignee_id" in task_data and task_data["assignee_id"]:
+            if "assignee_id" in task_data:
                 task.assignee_id = task_data["assignee_id"]
 
         db.session.commit()

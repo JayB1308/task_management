@@ -30,3 +30,5 @@ export * from "./thunks/getTasks";
 export * from "./thunks/getCurrentTask";
 export * from "./thunks/deleteTask";
 export * from "./thunks/updateTask";
+export * from "./thunks/createTeam";
+export * from "./thunks/joinTeam";

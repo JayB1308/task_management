@@ -5,6 +5,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Project } from "./pages/Project";
 import { CurrentProject } from "./pages/CurrentProject";
 import { CurrentTask } from "./components/CurrentTask";
+import { Team } from "./pages/Team";
 
 const ProtectedRoute = ({ children }) => {
   const isLoggedIn = useSelector((state) => {
@@ -23,6 +24,14 @@ const Router = () => {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/team"
+        element={
+          <ProtectedRoute>
+            <Team />
           </ProtectedRoute>
         }
       />

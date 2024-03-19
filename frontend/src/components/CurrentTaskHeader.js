@@ -1,26 +1,20 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { MdDeleteForever } from "react-icons/md";
-import { EditName } from "./shared/EditName";
-import { deleteTask } from "../store";
-import { updateTask } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { deleteTask, getCurrentTask, updateTask } from "../store";
 import { open } from "../store/slices/modalSlice";
-import { getCurrentTask } from "../store";
-import { Dropdown } from "./shared/Dropdown";
-import { getTypeBG, getTypeText } from "../utils/typeColor";
 import { getPrioirityBG, getPriorityText } from "../utils/priorityColor";
-import { getStatusText, getStatusBackground } from "../utils/statusColor";
+import { getStatusBackground, getStatusText } from "../utils/statusColor";
+import { AiOutlinePushpin } from "react-icons/ai";
+import { AiFillPushpin } from "react-icons/ai";
+import { getTypeBG, getTypeText } from "../utils/typeColor";
 import { DateSetter } from "./shared/DateSetter";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { FaUser } from "react-icons/fa";
-import { privateApiInstance } from "../axios";
-import { RxCheckCircled } from "react-icons/rx";
-import { RxCrossCircled } from "react-icons/rx";
-import dayjs from "dayjs";
+import { Dropdown } from "./shared/Dropdown";
+import { EditName } from "./shared/EditName";
 
 const getEnumValue = (originalValue) => {
   return originalValue.split(".")[1];
@@ -31,15 +25,11 @@ export function CurrentTaskHeader() {
   const navigate = useNavigate();
   const currentTask = useSelector((state) => state.task.currentTask);
   const currentProject = useSelector((state) => state.project.currentProject);
+  const user = useSelector((state) => state.user.user);
 
   const [type, setType] = useState(false);
   const [priority, setPriority] = useState(false);
   const [status, setStatus] = useState(false);
-  const [assignee, setAssignee] = useState();
-  const [username, setUsername] = useState("");
-  const [assigneeEdit, setAssigneeEdit] = useState(false);
-  const [valid, setValid] = useState(false);
-  const [dirty, setDirty] = useState(false);
 
   const { taskID } = useParams();
 
@@ -48,47 +38,9 @@ export function CurrentTaskHeader() {
     navigate(`/project/${currentProject.id}`);
   };
 
-  const getAssignee = async () => {
-    if (currentTask.assignee_id) {
-      const response = await privateApiInstance.get(
-        `/auth/user/${currentTask.assignee_id}`
-      );
-
-      if (response.data) {
-        setAssignee(response.data.user);
-        setUsername(response.data.user?.username);
-      }
-    }
-  };
-
-  useEffect(() => {
-    getAssignee();
-  }, []);
-
   useEffect(() => {
     getCurrentTask(taskID);
-    getAssignee();
   }, [taskID]);
-
-  useEffect(() => {
-    const checkValid = setTimeout(() => {
-      privateApiInstance
-        .post("/auth/check_username", {
-          username: username,
-        })
-        .then((res) => {
-          if (res?.status === 200) {
-            setValid(true);
-            if (res.data.user && Object.keys(res.data.user).length !== 0) {
-              setAssignee(res.data.user);
-              setUsername(res.data.user.username);
-            }
-          }
-        });
-    }, [1000]);
-
-    return () => clearTimeout(checkValid);
-  }, [username]);
 
   const types = [
     { label: "BUG", value: "BUG", class: `${getTypeText("BUG")} text-md` },
@@ -194,6 +146,17 @@ export function CurrentTaskHeader() {
     );
   };
 
+  const handlePinnedChange = (mode = "pin") => {
+    dispatch(
+      updateTask({
+        id: currentTask.id,
+        data: {
+          assignee_id: mode === "pin" ? user.id : null,
+        },
+      })
+    );
+  };
+
   return (
     <div className="w-full">
       <div className="w-full h-10 flex items-center gap-2 px-2">
@@ -208,8 +171,23 @@ export function CurrentTaskHeader() {
           inputClasses="w-full text-xl font-semibold"
         />
 
+        <div className="ml-auto mr-5">
+          {currentTask.assignee_id ? (
+            <AiFillPushpin
+              size={22}
+              className="cursor-pointer text-pink-600"
+              onClick={() => handlePinnedChange("unpin")}
+            />
+          ) : (
+            <AiOutlinePushpin
+              size={22}
+              className="cursor-pointer text-pink-600"
+              onClick={() => handlePinnedChange("pin")}
+            />
+          )}
+        </div>
         <button
-          className="border-2 border-red-600 flex items-center px-4 py-1 rounded-md ml-auto"
+          className="border-2 border-red-600 flex items-center px-4 py-1 rounded-md"
           onClick={handleDelete}
         >
           <MdDeleteForever size={24} className="text-red-600" />

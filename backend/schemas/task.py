@@ -35,4 +35,4 @@ class UpdateTaskRequestSchema(Schema):
     type = fields.Raw()
     status = fields.String()
     priority = fields.String()
-    assignee_id = fields.UUID()
+    assignee_id = fields.UUID(allow_none=True)
